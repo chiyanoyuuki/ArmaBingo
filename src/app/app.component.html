@@ -11,6 +11,8 @@
   </div>
 </div>
 
+<button *ngIf="actions.length==0" (click)="goToSite()">Avoir les données</button>
+
 <div class="overlay" *ngIf="popupVisible" (click)="closePopup($event)">
   <div class="popup" (click)="$event.stopPropagation()">
     <p>Valider l'accomplissement de <b>{{ selectedItem.prenom }} {{selectedItem.action}}</b> ?</p>

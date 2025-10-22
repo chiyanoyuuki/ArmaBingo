@@ -75,4 +75,8 @@ export class AppComponent implements OnInit{
     const params = new URLSearchParams(window.location.search);
     return params.get('joueur');
   }
+
+  goToSite() {
+    window.location.href = 'https://chiyanh.cluster031.hosting.ovh.net/getArmaBingo.php';
+  }
 }
