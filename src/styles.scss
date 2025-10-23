@@ -36,6 +36,10 @@ p{
     input, button{
         margin-bottom:2vh;
     }
+    .disabled{
+        opacity:0.4;
+        pointer-events: none;
+    }
 }
 
 .admin{

@@ -7,7 +7,7 @@
   <p>Ajouter une action</p>
   <input type="text" placeholder="Rentrez un prénom.." [(ngModel)]="actiontoadd.prenom"/>
   <input type="text" placeholder="Rentrez une action.." [(ngModel)]="actiontoadd.action" />
-  <button (click)="openPopup(actiontoadd)">Valider</button>
+  <button (click)="openPopup(actiontoadd)" [class.disabled]="actiontoadd.prenom==''||actiontoadd.action==''">Valider</button>
 </div>
 
 <div class="admin">
