@@ -163,4 +163,14 @@ input{
         opacity:0.4;
         text-decoration: line-through;
     }
+    div{
+        margin-bottom:2vh;
+        p{
+            font-weight:bold;
+        }
+    }
+    .completed{
+        color: green;
+        font-weight: bold;
+    }
 }

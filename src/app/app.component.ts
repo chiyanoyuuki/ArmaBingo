@@ -132,6 +132,12 @@ export class AppComponent implements OnInit{
     return jou.filter((a:any)=>a.completed).length + " / " + jou.length;
   }
 
+  completed(j:any)
+  {
+    let jou = this.actions.filter((a:any)=>a.prenom==j);
+    return jou.filter((a:any)=>a.completed).length == jou.length;
+  }
+
   triggerJoueur(j:any)
   {
     if(this.joueur!='Charles')return;
@@ -142,6 +148,37 @@ export class AppComponent implements OnInit{
   who(j:any){
     return this.nothere.includes(j);
   }
+
+ computeCompletedLines(){
+  let items = this.getActions();
+  let cols = 4;
+  const rows = Math.ceil(items.length / cols);
+  let completedRows = 0;
+  let completedCols = 0;
+
+  // Rows
+  for (let r = 0; r < rows; r++) {
+    let ok = true;
+    for (let c = 0; c < cols; c++) {
+      const idx = r * cols + c;
+      if (idx >= items.length || !items[idx].completed) { ok = false; break; }
+    }
+    if (ok) completedRows++;
+  }
+
+  // Columns (only if every row has an item at that column)
+  for (let c = 0; c < cols; c++) {
+    let ok = true;
+    for (let r = 0; r < rows; r++) {
+      const idx = r * cols + c;
+      if (idx >= items.length || !items[idx].completed) { ok = false; break; }
+    }
+    if (ok) completedCols++;
+  }
+  
+  return `<p>Lignes complétées : ${completedRows}/${rows}</p><p>Colonnes complétées : ${completedCols}/${cols}</p>`;
+}
+
 
   complete(){
     this.http.post<any>("https://chiyanh.cluster031.hosting.ovh.net/setArmaBingo.php", {id:this.selectedItem.id, completed:this.selectedItem.completed?0:1})

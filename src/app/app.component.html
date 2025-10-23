@@ -35,9 +35,10 @@
 </div>
 
 <div class="scores" *ngIf="(actions.length>0&&!gamelaunched)||(gamelaunched&&hasParam())">
+  <div [innerHTML]="computeCompletedLines()"></div>
   <p><b>Total : {{getCompleted()}}</b></p>
   <br/>
-  <p *ngFor="let joueur of getJoueurs2()" (click)="triggerJoueur(joueur)" [class.nothere]="who(joueur)">{{joueur}} : {{getJoueur(joueur)}}</p>
+  <p *ngFor="let joueur of getJoueurs2()" (click)="triggerJoueur(joueur)" [class.completed]="completed(joueur)" [class.nothere]="who(joueur)">{{joueur}} : {{getJoueur(joueur)}}</p>
   <button *ngIf="joueur=='Charles'" (click)="modifyJoueurs()">Modifier Joueurs</button>
 </div>
 
