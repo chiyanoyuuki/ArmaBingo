@@ -3,7 +3,7 @@
   <p (click)="joueur=prenom;connect()" *ngFor="let prenom of getJoueurs()">{{prenom.charAt(0).toUpperCase() + prenom.slice(1)}}</p>
 </div>
 
-<div class="add">
+<div class="add" *ngIf="actions.length>0">
   <p>Ajouter une action</p>
   <input type="text" placeholder="Rentrez un prénom.." [(ngModel)]="actiontoadd.prenom"/>
   <input type="text" placeholder="Rentrez une action.." [(ngModel)]="actiontoadd.action" />
@@ -17,16 +17,17 @@
     <option [ngValue]="''">Pas de Tri</option>
     <option [ngValue]="joueur" *ngFor="let joueur of getJoueurs2()">{{joueur}}</option>
   </select>
+  <input type="text" [(ngModel)]="recherche" placeholder="Recherche.."/>
 </div>
 
-<div class="container" *ngIf="hasParam()&&gamelaunched" >
+<div class="container" *ngIf="(hasParam()&&gamelaunched)||joueur=='Charles'" >
   <div *ngFor="let action of getActions()" class="bloc" (click)="openPopup(action)" [class.completed]="action.completed" [class.manon]="action.completed&&action.prenom=='Manon'" [class.charles]="action.completed&&action.prenom=='Charles'" [class.ma]="action.prenom=='Manon'" [class.cha]="action.prenom=='Charles'">
     <p>{{action.prenom}}</p>
     <p *ngIf="joueur!=action.prenom||action.completed">{{action.action}}</p>
   </div>
 </div>
 
-<div class="scores">
+<div class="scores" *ngIf="actions.length>0">
   <p><b>Total : {{getCompleted()}}</b></p>
   <br/>
   <p *ngFor="let joueur of getJoueurs2()">{{joueur}} : {{getJoueur(joueur)}}</p>

@@ -22,6 +22,7 @@ export class AppComponent implements OnInit{
   gamelaunched = false;
   actiontoadd = {action:"",prenom:""};
   joueurSelected = "";
+  recherche = "";
 
   ngOnInit()
   {
@@ -94,8 +95,10 @@ export class AppComponent implements OnInit{
   }
 
   getActions(){
-    if(this.joueurSelected=="")return this.actions;
-    return this.actions.filter((a:any)=>a.prenom==this.joueurSelected);
+    let retour = this.actions;
+    if(this.joueurSelected!="") retour = retour.filter((a:any)=>a.prenom==this.joueurSelected);
+    if(this.recherche!="") retour = retour.filter((a:any)=>a.prenom.toLowerCase().includes(this.recherche)||a.action.toLowerCase().includes(this.recherche));
+    return retour;
   }
   
   getCompleted(){
