@@ -36,6 +36,7 @@ export class AppComponent implements OnInit{
     this.http.get<any>("https://chiyanh.cluster031.hosting.ovh.net/getArmaBingo.php").subscribe(data => {
       this.gamelaunched = data.find((d:any)=>d.id==-1).completed=="0"?false:true;
       this.nothere = JSON.parse(data.find((d:any)=>d.id==-2).prenom);
+      if(!this.nothere)this.nothere=[];
       console.log("nothere",this.nothere);
       this.actions = data.filter((d:any)=>d.id>0);
       this.actions.forEach((a:any) => {
