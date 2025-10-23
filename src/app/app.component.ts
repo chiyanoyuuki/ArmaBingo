@@ -23,6 +23,7 @@ export class AppComponent implements OnInit{
   actiontoadd = {action:"",prenom:""};
   joueurSelected = "";
   recherche = "";
+  nothere:any = [];
 
   ngOnInit()
   {
@@ -33,10 +34,16 @@ export class AppComponent implements OnInit{
 
   loadSiteData() {
     this.http.get<any>("https://chiyanh.cluster031.hosting.ovh.net/getArmaBingo.php").subscribe(data => {
-      this.gamelaunched = data.find((d:any)=>d.id==-1).completed;
+      this.gamelaunched = data.find((d:any)=>d.id==-1).completed=="0"?false:true;
+      this.nothere = JSON.parse(data.find((d:any)=>d.id==-2).prenom);
+      console.log("nothere",this.nothere);
       this.actions = data.filter((d:any)=>d.id>0);
       this.actions.forEach((a:any) => {
         a.prenom = a.prenom.charAt(0).toUpperCase() + a.prenom.slice(1).toLowerCase();
+        a.prenom = a.prenom.replace(/ */g,"");
+        if(a.prenom=="N'importequi")a.prenom="N'importe qui";
+        a.date = new Date(a.date).toTimeString().slice(0, 5);
+        a.completed = (a.completed=="0"?false:true);
       });
       console.log(this.actions);
       //this.actions = this.actions.sort(() => Math.random() - 0.5);
@@ -45,6 +52,7 @@ export class AppComponent implements OnInit{
   openPopup(item: any) {
     if(item.completed&&this.joueur!="Charles")return;
     if(item.prenom==this.joueur&&this.joueur!="Charles")return;
+    if(!item.completed&&item.prenom=="Charles"&&this.joueur=="Charles")return;
     this.selectedItem = item;
     this.popupVisible = true;
   }
@@ -81,16 +89,18 @@ export class AppComponent implements OnInit{
   }
 
   getJoueurs(){
-    const prenoms:string[] = Array.from(
+    let prenoms:string[] = Array.from(
       new Set(this.actions.map((a:any) => a.prenom))
     );
+    prenoms = prenoms.sort((a, b) => a.localeCompare(b, 'fr', { sensitivity: 'base' }));
     return prenoms.filter((p:any)=>p!="Charles");
   }
 
   getJoueurs2(){
-    const prenoms:string[] = Array.from(
+    let prenoms:string[] = Array.from(
       new Set(this.actions.map((a:any) => a.prenom))
     );
+    prenoms = prenoms.sort((a, b) => a.localeCompare(b, 'fr', { sensitivity: 'base' }));
     return prenoms;
   }
 
@@ -98,16 +108,29 @@ export class AppComponent implements OnInit{
     let retour = this.actions;
     if(this.joueurSelected!="") retour = retour.filter((a:any)=>a.prenom==this.joueurSelected);
     if(this.recherche!="") retour = retour.filter((a:any)=>a.prenom.toLowerCase().includes(this.recherche)||a.action.toLowerCase().includes(this.recherche));
+    retour = retour.filter((a:any)=>!this.nothere.includes(a.prenom));
     return retour;
   }
   
   getCompleted(){
-    return this.actions.filter((a:any)=>a.completed).length + " / " + this.actions.length;
+    let tab = this.getActions();
+    return tab.filter((a:any)=>a.completed).length + " / " + tab.length;
   }
   
   getJoueur(j:any){
     let jou = this.actions.filter((a:any)=>a.prenom==j);
     return jou.filter((a:any)=>a.completed).length + " / " + jou.length;
+  }
+
+  triggerJoueur(j:any)
+  {
+    if(this.joueur!='Charles')return;
+    if(this.nothere.includes(j))this.nothere.splice(this.nothere.indexOf(j),1);
+    else this.nothere.push(j);
+  }
+
+  who(j:any){
+    return this.nothere.includes(j);
   }
 
   complete(){
@@ -127,8 +150,7 @@ export class AppComponent implements OnInit{
     this.http.post<any>("https://chiyanh.cluster031.hosting.ovh.net/addArmaBingo.php", {prenom:this.selectedItem.prenom,action:this.selectedItem.action})
       .subscribe({
         next: (res) => {
-          this.actiontoadd.prenom = "";
-          this.actiontoadd.action = "";
+          this.connect();
         },
         error: (err) => {
           console.error(err);
@@ -154,6 +176,34 @@ export class AppComponent implements OnInit{
 
   reinitGame(){
     this.http.post<any>("https://chiyanh.cluster031.hosting.ovh.net/reinitArmaBingo.php", {id:(this.gamelaunched?0:1)})
+      .subscribe({
+        next: (res) => {
+          this.connect();
+        },
+        error: (err) => {
+          console.error(err);
+          alert('Erreur serveur');
+        }
+      });
+  }
+
+
+  shuffleGame(){
+    this.http.post<any>("https://chiyanh.cluster031.hosting.ovh.net/shuffleArmaBingo.php", {id:0})
+      .subscribe({
+        next: (res) => {
+          this.connect();
+        },
+        error: (err) => {
+          console.error(err);
+          alert('Erreur serveur');
+        }
+      });
+  }
+
+
+  modifyJoueurs(){
+    this.http.post<any>("https://chiyanh.cluster031.hosting.ovh.net/modifyArmaBingo.php", {prenoms:this.nothere})
       .subscribe({
         next: (res) => {
           this.connect();

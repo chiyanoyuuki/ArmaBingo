@@ -3,7 +3,7 @@
   <p (click)="joueur=prenom;connect()" *ngFor="let prenom of getJoueurs()">{{prenom.charAt(0).toUpperCase() + prenom.slice(1)}}</p>
 </div>
 
-<div class="add" *ngIf="actions.length>0">
+<div class="add" *ngIf="(actions.length>0&&!gamelaunched)||(gamelaunched&&hasParam())">
   <p>Ajouter une action</p>
   <input type="text" placeholder="Rentrez un prénom.." [(ngModel)]="actiontoadd.prenom"/>
   <input type="text" placeholder="Rentrez une action.." [(ngModel)]="actiontoadd.action" />
@@ -13,24 +13,32 @@
 <div class="admin">
   <button (click)="launchGame()" *ngIf="joueur=='Charles'">{{gamelaunched?'Stopper':'Lancer'}} partie</button>
   <button (click)="reinitGame()" *ngIf="joueur=='Charles'">Réinit partie</button>
-  <select [(ngModel)]="joueurSelected" *ngIf="gamelaunched">
+  <button (click)="shuffleGame()" *ngIf="joueur=='Charles'">Shuffle partie</button>
+  <select [(ngModel)]="joueurSelected" *ngIf="(hasParam()&&gamelaunched)||joueur=='Charles'">
     <option [ngValue]="''">Pas de Tri</option>
     <option [ngValue]="joueur" *ngFor="let joueur of getJoueurs2()">{{joueur}}</option>
   </select>
-  <input type="text" [(ngModel)]="recherche" placeholder="Recherche.."/>
+  <div class="search" *ngIf="(hasParam()&&gamelaunched)||joueur=='Charles'">
+    <input type="text" [(ngModel)]="recherche" placeholder="Recherche.."/>
+    <p (click)="recherche=''">X</p>
+  </div>
 </div>
 
 <div class="container" *ngIf="(hasParam()&&gamelaunched)||joueur=='Charles'" >
-  <div *ngFor="let action of getActions()" class="bloc" (click)="openPopup(action)" [class.completed]="action.completed" [class.manon]="action.completed&&action.prenom=='Manon'" [class.charles]="action.completed&&action.prenom=='Charles'" [class.ma]="action.prenom=='Manon'" [class.cha]="action.prenom=='Charles'">
+  <div *ngFor="let action of getActions()" class="bloc" (click)="openPopup(action)" [class.completed]="action.completed" 
+  [class.complme]="action.completed&&action.prenom==joueur" 
+  [class.me]="action.prenom==joueur">
     <p>{{action.prenom}}</p>
+    <p>{{action.completed?action.date:''}}</p>
     <p *ngIf="joueur!=action.prenom||action.completed">{{action.action}}</p>
   </div>
 </div>
 
-<div class="scores" *ngIf="actions.length>0">
+<div class="scores" *ngIf="(actions.length>0&&!gamelaunched)||(gamelaunched&&hasParam())">
   <p><b>Total : {{getCompleted()}}</b></p>
   <br/>
-  <p *ngFor="let joueur of getJoueurs2()">{{joueur}} : {{getJoueur(joueur)}}</p>
+  <p *ngFor="let joueur of getJoueurs2()" (click)="triggerJoueur(joueur)" [class.nothere]="who(joueur)">{{joueur}} : {{getJoueur(joueur)}}</p>
+  <button *ngIf="joueur=='Charles'" (click)="modifyJoueurs()">Modifier Joueurs</button>
 </div>
 
 <button *ngIf="actions.length==0" (click)="goToSite()">Avoir les données</button>
