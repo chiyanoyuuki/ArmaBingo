@@ -40,6 +40,7 @@ export class AppComponent implements OnInit{
       this.actions = data.filter((d:any)=>d.id>0);
       this.actions.forEach((a:any) => {
         a.prenom = a.prenom.charAt(0).toUpperCase() + a.prenom.slice(1).toLowerCase();
+        a.action = a.action.charAt(0).toUpperCase() + a.action.slice(1).toLowerCase();
         a.prenom = a.prenom.replace(/ */g,"");
         if(a.prenom=="N'importequi")a.prenom="N'importe qui";
         a.date = new Date(a.date).toTimeString().slice(0, 5);
