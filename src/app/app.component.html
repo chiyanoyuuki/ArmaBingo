@@ -1,22 +1,51 @@
-<div *ngIf="!joueur" class="connection">
+<div *ngIf="!joueur&&gamelaunched" class="connection">
   <p>Qui joue ?</p>
-  <p (click)="joueur='Charles';connect()">Charles</p>
-  <p (click)="joueur='Manon';connect()">Manon</p>
+  <p (click)="joueur=prenom;connect()" *ngFor="let prenom of getJoueurs()">{{prenom.charAt(0).toUpperCase() + prenom.slice(1)}}</p>
 </div>
 
-<div class="container" *ngIf="hasParam()" >
-  <div *ngFor="let action of actions" class="bloc" (click)="openPopup(action)" [class.completed]="action.completed" [class.manon]="action.completed&&action.prenom=='Manon'" [class.charles]="action.completed&&action.prenom=='Charles'" [class.ma]="action.prenom=='Manon'" [class.cha]="action.prenom=='Charles'">
-    <p>{{action.prenom.charAt(0).toUpperCase() + action.prenom.slice(1)}}</p>
-    <p *ngIf="joueur!=action.prenom||action.completed">{{action.action.charAt(0).toUpperCase() + action.action.slice(1)}}</p>
+<div class="add">
+  <p>Ajouter une action</p>
+  <input type="text" placeholder="Rentrez un prénom.." [(ngModel)]="actiontoadd.prenom"/>
+  <input type="text" placeholder="Rentrez une action.." [(ngModel)]="actiontoadd.action" />
+  <button (click)="openPopup(actiontoadd)">Valider</button>
+</div>
+
+<div class="admin">
+  <button (click)="launchGame()" *ngIf="joueur=='Charles'">{{gamelaunched?'Stopper':'Lancer'}} partie</button>
+  <button (click)="reinitGame()" *ngIf="joueur=='Charles'">Réinit partie</button>
+  <select [(ngModel)]="joueurSelected" *ngIf="gamelaunched">
+    <option [ngValue]="''">Pas de Tri</option>
+    <option [ngValue]="joueur" *ngFor="let joueur of getJoueurs2()">{{joueur}}</option>
+  </select>
+</div>
+
+<div class="container" *ngIf="hasParam()&&gamelaunched" >
+  <div *ngFor="let action of getActions()" class="bloc" (click)="openPopup(action)" [class.completed]="action.completed" [class.manon]="action.completed&&action.prenom=='Manon'" [class.charles]="action.completed&&action.prenom=='Charles'" [class.ma]="action.prenom=='Manon'" [class.cha]="action.prenom=='Charles'">
+    <p>{{action.prenom}}</p>
+    <p *ngIf="joueur!=action.prenom||action.completed">{{action.action}}</p>
   </div>
+</div>
+
+<div class="scores">
+  <p><b>Total : {{getCompleted()}}</b></p>
+  <br/>
+  <p *ngFor="let joueur of getJoueurs2()">{{joueur}} : {{getJoueur(joueur)}}</p>
 </div>
 
 <button *ngIf="actions.length==0" (click)="goToSite()">Avoir les données</button>
 
-<div class="overlay" *ngIf="popupVisible" (click)="closePopup($event)">
+<div class="overlay" *ngIf="popupVisible&&selectedItem.id" (click)="closePopup($event)">
   <div class="popup" (click)="$event.stopPropagation()">
     <p>Valider l'accomplissement de <b>{{ selectedItem.prenom }} {{selectedItem.action}}</b> ?</p>
     <button (click)="validate()">Valider</button>
+    <button (click)="popupVisible = false">Annuler</button>
+  </div>
+</div>
+
+<div class="overlay" *ngIf="popupVisible&&!selectedItem.id" (click)="closePopup($event)">
+  <div class="popup" (click)="$event.stopPropagation()">
+    <p>Valider l'ajout de <b>{{ selectedItem.prenom }} {{selectedItem.action}}</b> ?</p>
+    <button (click)="validate2()">Valider</button>
     <button (click)="popupVisible = false">Annuler</button>
   </div>
 </div>
