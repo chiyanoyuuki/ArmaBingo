@@ -45,9 +45,16 @@
 
 <div class="overlay" *ngIf="popupVisible&&selectedItem.id" (click)="closePopup($event)">
   <div class="popup" (click)="$event.stopPropagation()">
-    <p>Valider l'accomplissement de <b>{{ selectedItem.prenom }} {{selectedItem.action}}</b> ?</p>
-    <button (click)="validate()">Valider</button>
-    <button (click)="popupVisible = false">Annuler</button>
+    <p *ngIf="joueur!='Charles'">Valider l'accomplissement de <b>{{ selectedItem.prenom }} {{selectedItem.action}}</b> ?</p>
+    <div *ngIf="joueur=='Charles'">
+      <input type="texte" [(ngModel)]="selectedItem.prenom">
+      <input type="texte" [(ngModel)]="selectedItem.action">
+    </div>
+    <button (click)="validate()" *ngIf="joueur!='Charles'">Valider</button>
+    <button (click)="validate()" *ngIf="joueur=='Charles'">{{selectedItem.completed?'Annuler':'Valider'}}</button>
+    <button (click)="correct()" *ngIf="joueur=='Charles'">Modifier</button>
+    <button (click)="delete()" *ngIf="joueur=='Charles'">Supprimer</button>
+    <button (click)="popupVisible = false">Retour</button>
   </div>
 </div>
 

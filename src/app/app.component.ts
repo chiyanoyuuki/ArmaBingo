@@ -216,4 +216,32 @@ export class AppComponent implements OnInit{
         }
       });
   }
+
+
+  correct(){
+    this.http.post<any>("https://chiyanh.cluster031.hosting.ovh.net/correctArmaBingo.php", {id:this.selectedItem.id,prenom:this.selectedItem.prenom,action:this.selectedItem.action})
+      .subscribe({
+        next: (res) => {
+          this.connect();
+        },
+        error: (err) => {
+          console.error(err);
+          alert('Erreur serveur');
+        }
+      });
+  }
+
+
+  delete(){
+    this.http.post<any>("https://chiyanh.cluster031.hosting.ovh.net/deleteArmaBingo.php", {id:this.selectedItem.id})
+      .subscribe({
+        next: (res) => {
+          this.connect();
+        },
+        error: (err) => {
+          console.error(err);
+          alert('Erreur serveur');
+        }
+      });
+  }
 }
