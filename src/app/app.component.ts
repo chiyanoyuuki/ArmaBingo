@@ -98,6 +98,14 @@ export class AppComponent implements OnInit{
     return prenoms.filter((p:any)=>p!="Charles");
   }
 
+  getJoueursTri(){
+    let prenoms:string[] = Array.from(
+      new Set(this.getActions().map((a:any) => a.prenom))
+    );
+    prenoms = prenoms.sort((a, b) => a.localeCompare(b, 'fr', { sensitivity: 'base' }));
+    return prenoms;
+  }
+
   getJoueurs2(){
     let prenoms:string[] = Array.from(
       new Set(this.actions.map((a:any) => a.prenom))

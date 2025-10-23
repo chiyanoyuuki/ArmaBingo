@@ -16,7 +16,7 @@
   <button (click)="shuffleGame()" *ngIf="joueur=='Charles'">Shuffle partie</button>
   <select [(ngModel)]="joueurSelected" *ngIf="(hasParam()&&gamelaunched)||joueur=='Charles'">
     <option [ngValue]="''">Pas de Tri</option>
-    <option [ngValue]="joueur" *ngFor="let joueur of getJoueurs2()">{{joueur}}</option>
+    <option [ngValue]="joueur" *ngFor="let joueur of getJoueursTri()">{{joueur}}</option>
   </select>
   <div class="search" *ngIf="(hasParam()&&gamelaunched)||joueur=='Charles'">
     <input type="text" [(ngModel)]="recherche" placeholder="Recherche.."/>
